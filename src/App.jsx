@@ -7,7 +7,7 @@ function App() {
 
   useEffect(() => {
     const fetchApi = async () => {
-      const url = `http://api.weatherapi.com/v1/current.json?key=65036d46f3ba4ddaa7a80846241201&q=${search}`
+      const url = `https://api.weatherapi.com/v1/current.json?key=65036d46f3ba4ddaa7a80846241201&q=${search}`
       const response = await fetch(url);
       const jsondata = await response.json();
       setCity(jsondata);
@@ -21,7 +21,7 @@ function App() {
   }, [])
 
   const handleSubmit = async () => {
-    const url = `http://api.weatherapi.com/v1/current.json?key=65036d46f3ba4ddaa7a80846241201&q=${search}`
+    const url = `https://api.weatherapi.com/v1/current.json?key=65036d46f3ba4ddaa7a80846241201&q=${search}`
     const response = await fetch(url);
     const jsondata = await response.json();
     // console.log(jsondata);
