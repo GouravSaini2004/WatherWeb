@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
   const [city, setCity] = useState()
-  const [data, setData] = useState()
   const [search, setSearch] = useState("Meerut");
 
   useEffect(() => {
