@@ -12,6 +12,7 @@ function App() {
   const [day1, setDay1] = useState();
   const [day2, setDay2] = useState();
   const [day3, setDay3] = useState();
+  const [next, setNext] = useState([])
   const [forecast, setForecast] = useState();
   const [search, setSearch] = useState("");
   const [error, setError] = useState("")
@@ -30,6 +31,7 @@ function App() {
       setDay1(jsondata.forecast && jsondata.forecast.forecastday[0]);
       setDay2(jsondata.forecast && jsondata.forecast.forecastday[1]);
       setDay3(jsondata.forecast && jsondata.forecast.forecastday[2]);
+      setNext(jsondata.forecast && jsondata.forecast.forecastday[1] && jsondata.forecast.forecastday[0].hour)
 
     }
 
@@ -66,6 +68,9 @@ function App() {
       setLocation(jsondata.location);
       setForecast(jsondata.forecast && jsondata.forecast.forecastday[0]);
       setHour(jsondata.forecast && jsondata.forecast.forecastday[0] && jsondata.forecast.forecastday[0].hour)
+      setDay1(jsondata.forecast && jsondata.forecast.forecastday[0]);
+      setDay2(jsondata.forecast && jsondata.forecast.forecastday[1]);
+      setDay3(jsondata.forecast && jsondata.forecast.forecastday[2]);
       setSearch("")
       // console.log(jsondata)
 
@@ -87,15 +92,20 @@ function App() {
   };
 
 
-  const handleLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const { latitude, longitude } = position.coords;
-        getLocation(latitude, longitude);
-      })
-    }
-  }
+  // const handleLocation = () => {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition((position) => {
+  //       const { latitude, longitude } = position.coords;
+  //       getLocation(latitude, longitude);
+  //     })
+  //   }
+  // }
 
+  const currentEpoch = Math.floor(Date.now() / 1000); // Current time in epoch seconds
+
+  const futureHours = hour.filter(hourItem => hourItem.time_epoch > currentEpoch);
+  const nextDayHours = next.filter(hourItem => hourItem.time_epoch < currentEpoch) || [];
+  const combinedHours = [...futureHours, ...nextDayHours];
 
 
   return (
@@ -110,7 +120,7 @@ function App() {
                 <div className='flex justify-between m-3 mt-3'>
                   <div className='w-10/12'><input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder='search by city' className='p-1 rounded-lg w-full' /></div>
                   <div className='text-center w-2/12 flex justify-between ml-1'><FaSearch onClick={handleSubmit} size={25} className='mt-1 mr-2 cursor-pointer' />
-                    <FaLocationCrosshairs size={25} className='mt-1 mr-2 cursor-pointer' onClick={handleLocation}/>
+                    <FaLocationCrosshairs size={25} className='mt-1 mr-2 cursor-pointe' />
                   </div>
                 </div>
                 {
@@ -122,7 +132,7 @@ function App() {
                   <h2 className='text-center font-semibold text-3xl text-white'>{location && location.name}</h2>
                 </div>
                 <div className='flex justify-around mt-3'>
-                  <div className=''>
+                  <div className='pt-9'>
                     <p className='font-bold text-5xl text-gray-800'>{current && current.temp_c}&deg;c</p>
                     <p className='text-black'>{formattedDate}</p>
                   </div>
@@ -142,7 +152,7 @@ function App() {
                     <hr />
                     <div className='p-4 overflow-y-auto'>
                       <ul className='flex space-x-4'> {/* Use flex for horizontal layout */}
-                        {hour.length > 0 && hour.map((hour, index) => {
+                        {combinedHours.length > 0 && combinedHours.map((hour, index) => {
                           const date = new Date(hour.time_epoch * 1000); // Convert epoch to milliseconds
                           const formattedTime = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 
@@ -234,7 +244,7 @@ function App() {
                     <div className='flex flex-row space-x-3 justify-around'>
                       <div className='flex flex-row space-x-2 mb-2 items-center'>
                         <p className='text-white text-xl m-2'>{forecast && forecast.astro && forecast.astro.sunrise}</p>
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwU313zmtxd0V5QBkb8XiaQoK9gtRAQ-AIeA&s" alt="" height={130} width={130} className='mt-2'/>
+                        <img src="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/4ad4afd9-1b7c-4043-8820-8322dc919c18/d6r3ze7-ede358d7-7d74-4d99-a023-c41de93b093b.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzRhZDRhZmQ5LTFiN2MtNDA0My04ODIwLTgzMjJkYzkxOWMxOFwvZDZyM3plNy1lZGUzNThkNy03ZDc0LTRkOTktYTAyMy1jNDFkZTkzYjA5M2IucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.wx1PpjChng962qEruw1OQ9FNbOWpxUFz1yFPZQ-t84M" alt="" height={130} width={130} className='mt-2' />
                         {/* <PiSunHorizonFill size={100} color='red' className='mt-2'/> */}
                         <p className='text-white text-xl m-2'>{forecast && forecast.astro && forecast.astro.sunset}</p>
                       </div>
@@ -247,7 +257,7 @@ function App() {
                     <div className='flex flex-row space-x-3 justify-around'>
                       <div className='flex flex-row space-x-2 mb-2 items-center'>
                         <p className='text-white text-xl m-2'>{forecast && forecast.astro && forecast.astro.moonrise}</p>
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNWjLdkZEH2qnf0sfoDtKBR9z3Yv-kY6Xg1Q&s" alt="" height={130} width={130} className='mt-2'/>
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBjJvC1qns5HHgvefYq2C0rIcfmhydxdg-mQ&s" alt="" height={130} width={130} className='mt-2' style={{ mixBlendMode: 'multiply' }} />
                         {/* <FaMoon size={100} color='red' className='mt-2'/> */}
                         <p className='text-white text-xl m-2'>{forecast && forecast.astro && forecast.astro.moonset}</p>
                       </div>
