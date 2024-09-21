@@ -71,6 +71,7 @@ function App() {
       setDay1(jsondata.forecast && jsondata.forecast.forecastday[0]);
       setDay2(jsondata.forecast && jsondata.forecast.forecastday[1]);
       setDay3(jsondata.forecast && jsondata.forecast.forecastday[2]);
+      setNext(jsondata.forecast && jsondata.forecast.forecastday[1] && jsondata.forecast.forecastday[0].hour)
       setSearch("")
       // console.log(jsondata)
 
